@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Specra control panel</title>
+<style>
+:root{--ink:#111;--mut:#666;--line:#ddd;--bg:#f6f5f2;--red:#b3261e;--ok:#1b6e3a}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#111;color:#fff;padding:14px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}header b{font-size:17px;letter-spacing:.04em}
+header a{color:#fff;opacity:.85;font-size:14px}main{max-width:1000px;margin:0 auto;padding:20px}
+.tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}.tabs button,.btn{border:1px solid #111;background:#fff;padding:10px 16px;font:600 14px inherit;cursor:pointer}
+.tabs button.on,.btn.primary{background:#111;color:#fff}.btn:disabled{opacity:.5;cursor:default}
+.card{background:#fff;border:1px solid var(--line);padding:16px;margin:0 0 12px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.mut{color:var(--mut);font-size:13px}.ok{color:var(--ok);font-weight:600}.bad{color:var(--red);font-weight:600}
+.pill{display:inline-block;padding:2px 8px;border:1px solid #111;font-size:12px;font-weight:600;margin-right:6px}
+.login{max-width:360px;margin:12vh auto}input[type=password]{width:100%;padding:12px;border:1px solid #bbb;font:inherit;margin:8px 0 12px}
+table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:2px 10px;font-size:14px;margin-top:8px}.kv span:nth-child(odd){color:var(--mut)}
+a{color:#0b57d0;word-break:break-all}
+</style></head>
+<body>
+<header><b>SPECRA control panel</b><a href="/admin/">Edit designs, photos and prices</a><a href="https://dashboard.stripe.com/payments" target="_blank" rel="noopener">Stripe payments</a><a href="/" target="_blank">View site</a></header>
+<main>
+<div id="login" class="card login" hidden><h2>Sign in</h2><label>Admin password<input type="password" id="pw" autocomplete="current-password"></label><button class="btn primary" id="go">Sign in</button><p id="lerr" class="bad"></p></div>
+<div id="app" hidden>
+  <div class="tabs"><button data-t="orders" class="on">Orders and messages</button><button data-t="links">Stripe payment links</button></div>
+  <section id="t-orders"></section>
+  <section id="t-links" hidden></section>
+</div>
+</main>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function pw(){try{return sessionStorage.getItem('specraPw')||''}catch(e){return ''}}
+function api(path,opt){opt=opt||{};opt.headers=Object.assign({'x-admin-password':pw()},opt.headers||{});
+  return fetch('/.netlify/functions/'+path,opt).then(function(r){return r.json().catch(function(){return{error:'Server error ('+r.status+')'}}).then(function(j){if(r.status===401){try{sessionStorage.removeItem('specraPw')}catch(e){}j.auth=true}return j})})}
+function show(){var ok=!!pw();$('#login').hidden=ok;$('#app').hidden=!ok;if(ok)loadOrders()}
+$('#go').onclick=function(){var v=$('#pw').value;if(!v)return;try{sessionStorage.setItem('specraPw',v)}catch(e){}$('#lerr').textContent='';api('orders').then(function(j){if(j.auth){$('#lerr').textContent='Wrong password.';return}show()})};
+$('#pw').addEventListener('keydown',function(e){if(e.key==='Enter')$('#go').click()});
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});$('#t-orders').hidden=b.dataset.t!=='orders';$('#t-links').hidden=b.dataset.t!=='links';if(b.dataset.t==='links')loadLinks();else loadOrders()}});
+
+function fmt(d){try{return new Date(d).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}catch(e){return d}}
+function fileLinks(data){var out=[];Object.keys(data).forEach(function(k){var v=data[k];if(v&&typeof v==='object'&&v.url)out.push('<a href="'+esc(v.url)+'" target="_blank" rel="noopener">'+esc(v.filename||k)+'</a>')});return out.join('<br>')}
+function items(data){try{var c=JSON.parse(data.cart_json||'[]');return c.map(function(i){return esc(i.qty+' × '+i.name+' ('+i.type+', '+i.colour+', '+i.size+(i.kind==='custom'?', '+(i.sides>1?'front and back':'one side'):'')+') '+(i.line!=null?'€'+i.line:''))}).join('<br>')}catch(e){return ''}}
+function loadOrders(){var el=$('#t-orders');el.innerHTML='<p class="mut">Loading…</p>';
+  api('orders').then(function(j){if(j.auth){show();return}if(j.error){el.innerHTML='<div class="card bad">'+esc(j.error)+'</div>';return}
+    var rows=(j.submissions||[]).filter(function(s){return s.form!=='newsletter'});
+    if(!rows.length){el.innerHTML='<div class="card">No orders or messages yet.</div>';return}
+    el.innerHTML='<p class="mut">Newest first. Orders in the cart form may not be paid yet: check Stripe before you print.</p>'+rows.map(function(s){var d=s.data||{},isOrder=s.form==='order';
+      return '<div class="card"><div class="row"><div><span class="pill">'+esc(s.form)+'</span><b>'+esc(d.name||s.name||'')+'</b> <span class="mut">'+esc(s.email||d.email||'')+'</span></div><span class="mut">'+esc(fmt(s.created))+'</span></div>'
+      +'<div class="kv">'
+      +(d.order_ref?'<span>Reference</span><span><b>'+esc(d.order_ref)+'</b></span>':'')
+      +(isOrder?'<span>Items</span><span>'+items(d)+'</span><span>Total</span><span>€'+esc(d.grand_total||d.cart_total||'')+(d.discount_code?' (code '+esc(d.discount_code)+')':'')+'</span>':'')
+      +(d.phone?'<span>Phone</span><span>'+esc(d.phone)+'</span>':'')
+      +(d.address?'<span>Address</span><span>'+esc([d.address,d.postal,d.city,d.country].filter(Boolean).join(', '))+'</span>':'')
+      +(d.notes||d.message?'<span>Message</span><span>'+esc(d.notes||d.message)+'</span>':'')
+      +(fileLinks(d)?'<span>Files</span><span>'+fileLinks(d)+'</span>':'')
+      +'</div></div>'}).join('')})}
+
+function loadLinks(){var el=$('#t-links');el.innerHTML='<p class="mut">Loading…</p>';
+  api('stripe-links',{method:'POST',body:JSON.stringify({action:'status'})}).then(function(j){if(j.auth){show();return}if(j.error){el.innerHTML='<div class="card bad">'+esc(j.error)+'</div>';return}
+    var miss=j.designs.filter(function(d){return !d.url}).length;
+    el.innerHTML='<div class="card"><div class="row"><div><b>'+j.designs.length+' designs</b> · <span class="'+(miss?'bad':'ok')+'">'+(miss?miss+' without a payment link':'all have a payment link')+'</span></div><button class="btn primary" id="mk" '+(miss?'':'disabled')+'>Create missing links in Stripe</button></div><p class="mut">New designs are added in the editor (Edit designs, photos and prices). Come back here and press the button. The site updates itself in about a minute. If you change a price, press Replace link on that design.</p><div id="res"></div></div>'
+    +'<div class="card"><table><tr><th>Design</th><th>Price</th><th>Link</th><th></th></tr>'+j.designs.map(function(d){return '<tr><td>'+esc(d.name)+'<br><span class="mut">'+esc(d.type)+', '+(d.sides>1?'front and back':'one side')+'</span></td><td>'+(d.price!=null?'€'+esc(d.price):'<span class="bad">no price</span>')+'</td><td>'+(d.url?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener">open</a>':'<span class="bad">missing</span>')+'</td><td>'+(d.url?'<button class="btn" data-re="'+esc(d.slug)+'">Replace link</button>':'')+'</td></tr>'}).join('')+'</table></div>';
+    function run(body,btn){btn.disabled=true;$('#res').innerHTML='<p class="mut">Working, this can take a minute…</p>';
+      api('stripe-links',{method:'POST',body:JSON.stringify(body)}).then(function(r){var h='';if(r.error)h+='<p class="bad">'+esc(r.error)+'</p>';(r.created||[]).forEach(function(c){h+='<p class="ok">Created: '+esc(c.name)+'</p>'});(r.failed||[]).forEach(function(c){h+='<p class="bad">Failed: '+esc(c.name)+' - '+esc(c.error)+'</p>'});if(r.message)h+='<p>'+esc(r.message)+'</p>';if((r.created||[]).length)h+='<p class="mut">Saved. The site updates in about a minute.</p>';$('#res').innerHTML=h;btn.disabled=false;if((r.created||[]).length)setTimeout(loadLinks,1500)})}
+    var mk=$('#mk');if(mk)mk.onclick=function(){run({action:'create'},mk)};
+    document.querySelectorAll('[data-re]').forEach(function(b){b.onclick=function(){if(confirm('Create a new Stripe link for this design with the current price?'))run({action:'create',recreate:[b.dataset.re]},b)}})})}
+show();
+})();
+</script>
+</body></html>

@@ -1,0 +1,168 @@
+# Specra admin. Edit designs, sections and prices from https://specra.store/admin
+# Repository: specragroup/specra-site
+backend:
+  name: github
+  repo: specragroup/specra-site
+  branch: main
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+site_url: https://specra.store
+display_url: https://specra.store
+locale: en
+
+collections:
+  - name: designs
+    label: "Designs and sections"
+    files:
+      - name: products
+        label: "All designs"
+        file: "data/products.json"
+        fields:
+          - label: "Sections"
+            name: categories
+            widget: list
+            summary: "{{fields.name}}"
+            hint: "A section is a group of designs, for example Anime or Slogan Tees."
+            fields:
+              - { label: "Section ID (lowercase letters only, no spaces, for example anime)", name: id, widget: string }
+              - { label: "Section name", name: name, widget: string }
+              - { label: "Short description", name: description, widget: string, required: false }
+          - label: "Designs"
+            name: products
+            widget: list
+            summary: "{{fields.name}} ({{fields.type}})"
+            hint: "Add a design: name, product, colour, section and a photo. The price comes from the Prices page."
+            fields:
+              - { label: "Design name", name: name, widget: string }
+              - label: "Product"
+                name: type
+                widget: select
+                options:
+                  - { label: "T-shirt", value: tee }
+                  - { label: "Hoodie", value: hoodie }
+                  - { label: "Sweatshirt", value: sweatshirt }
+                  - { label: "Tote bag", value: tote }
+              - { label: "Colour of the garment (for example Black)", name: colour, widget: string }
+              - label: "Section"
+                name: category
+                widget: relation
+                collection: designs
+                file: products
+                search_fields: ["categories.*.name"]
+                value_field: "categories.*.id"
+                display_fields: ["categories.*.name"]
+              - label: "Printed on"
+                name: sides
+                widget: select
+                default: "1"
+                options:
+                  - { label: "One side", value: "1" }
+                  - { label: "Front and back", value: "2" }
+              - { label: "Photo, front view (use a photo without a face)", name: image, widget: image }
+              - { label: "Photo, back view (optional)", name: image_back, widget: image, required: false }
+              - { label: "Description", name: description, widget: text, required: false }
+
+  - name: settings
+    label: "Prices"
+    files:
+      - name: prices
+        label: "Prices (include VAT)"
+        file: "data/settings.json"
+        fields:
+          - label: "Prices"
+            name: prices
+            widget: object
+            fields:
+              - label: "T-shirt"
+                name: tee
+                widget: object
+                fields:
+                  - { label: "One side", name: one, widget: number, value_type: float, min: 0 }
+                  - { label: "Front and back", name: two, widget: number, value_type: float, min: 0 }
+              - label: "Hoodie"
+                name: hoodie
+                widget: object
+                fields:
+                  - { label: "One side", name: one, widget: number, value_type: float, min: 0 }
+                  - { label: "Front and back", name: two, widget: number, value_type: float, min: 0 }
+              - label: "Sweatshirt"
+                name: sweatshirt
+                widget: object
+                fields:
+                  - { label: "One side", name: one, widget: number, value_type: float, min: 0 }
+                  - { label: "Front and back", name: two, widget: number, value_type: float, min: 0 }
+              - label: "Tote bag"
+                name: tote
+                widget: object
+                fields:
+                  - { label: "One side", name: one, widget: number, value_type: float, min: 0 }
+                  - { label: "Front and back", name: two, widget: number, value_type: float, min: 0 }
+          - { label: "Currency symbol", name: currency, widget: string }
+          - { label: "Note shown under prices", name: price_note, widget: string, required: false }
+          - label: "Delivery prices (EUR)"
+            name: delivery
+            widget: object
+            fields:
+              - { label: "Free delivery on orders over", name: free_over, widget: number, value_type: float, min: 0 }
+              - { label: "Estonia (0 = free)", name: estonia, widget: number, value_type: float, min: 0 }
+              - { label: "Latvia and Lithuania", name: latvia_lithuania, widget: number, value_type: float, min: 0 }
+              - { label: "Other EU countries", name: other, widget: number, value_type: float, min: 0 }
+          - { label: "Turnaround shown on the site (for example about 7 days)", name: turnaround, widget: string }
+          - { label: "Welcome discount code shown after joining the list", name: welcome_code, widget: string }
+
+  - name: blankgarments
+    label: "Customizer garments"
+    files:
+      - name: blanks
+        label: "Blank garment photos"
+        file: "data/blanks.json"
+        fields:
+          - label: "Garments"
+            name: blanks
+            widget: list
+            summary: "{{fields.colour}} ({{fields.type}})"
+            hint: "Photos of blank garments used in the customizer. Best: a PNG with a transparent background, garment facing the camera."
+            fields:
+              - label: "Product"
+                name: type
+                widget: select
+                options:
+                  - { label: "T-shirt", value: tee }
+                  - { label: "Hoodie", value: hoodie }
+                  - { label: "Sweatshirt", value: sweat }
+                  - { label: "Tote bag", value: tote }
+              - { label: "Colour name (for example White)", name: colour, widget: string }
+              - { label: "Colour code (for example #f1f1ef)", name: hex, widget: string }
+              - { label: "Photo, front", name: front, widget: image }
+              - { label: "Photo, back (leave empty if there is no back photo)", name: back, widget: image, required: false }
+              - { label: "Use this photo to make the other colours", name: tint_base, widget: boolean, default: false, required: false }
+              - { label: "Hide this colour in the picker (use only as a base)", name: hide_raw, widget: boolean, default: false, required: false }
+
+  - name: payments
+    label: "Payment links"
+    files:
+      - name: paylinks
+        label: "Stripe payment links"
+        file: "data/payment-links.json"
+        fields:
+          - label: "Links for designs"
+            name: designs
+            widget: list
+            summary: "{{fields.slug}}"
+            hint: "One line per design. The design ID is the name in lowercase with dashes, for example neon-mandala-tee."
+            fields:
+              - { label: "Design ID (for example neon-mandala-tee)", name: slug, widget: string }
+              - { label: "Stripe payment link", name: url, widget: string }
+          - label: "Links for custom prints (shown after a customer places an order)"
+            name: custom
+            widget: object
+            fields:
+              - { label: "T-shirt, one side", name: tee_1, widget: string, required: false }
+              - { label: "T-shirt, front and back", name: tee_2, widget: string, required: false }
+              - { label: "Hoodie, one side", name: hoodie_1, widget: string, required: false }
+              - { label: "Hoodie, front and back", name: hoodie_2, widget: string, required: false }
+              - { label: "Sweatshirt, one side", name: sweatshirt_1, widget: string, required: false }
+              - { label: "Sweatshirt, front and back", name: sweatshirt_2, widget: string, required: false }
+              - { label: "Tote bag, one side", name: tote_1, widget: string, required: false }
+              - { label: "Tote bag, front and back", name: tote_2, widget: string, required: false }

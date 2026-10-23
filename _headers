@@ -1,0 +1,16 @@
+/assets/style.css
+  Cache-Control: public, max-age=31536000, immutable
+/assets/customizer.css
+  Cache-Control: public, max-age=31536000, immutable
+/assets/app.js
+  Cache-Control: public, max-age=31536000, immutable
+/assets/customizer.js
+  Cache-Control: public, max-age=31536000, immutable
+/assets/shop-config.js
+  Cache-Control: public, max-age=31536000, immutable
+/assets/img/*
+  Cache-Control: public, max-age=604800
+/assets/blanks/*
+  Cache-Control: public, max-age=604800
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate

@@ -1,0 +1,30 @@
+{
+  "prices": {
+    "tee": {
+      "one": 15,
+      "two": 20
+    },
+    "hoodie": {
+      "one": 42,
+      "two": 45
+    },
+    "sweatshirt": {
+      "one": 40,
+      "two": 43
+    },
+    "tote": {
+      "one": 10,
+      "two": 12
+    }
+  },
+  "currency": "€",
+  "price_note": "Prices include VAT. Free delivery in Estonia during our launch offer, and free delivery on orders over €100.",
+  "delivery": {
+    "free_over": 100,
+    "estonia": 0,
+    "latvia_lithuania": 5,
+    "other": 7
+  },
+  "turnaround": "about 7 days",
+  "welcome_code": "SPECRA5"
+}

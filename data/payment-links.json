@@ -1,0 +1,20 @@
+{
+  "designs": [
+    {"slug": "neon-mandala-tee", "url": "https://buy.stripe.com/9B68wI3nEcORfnq6tW8so00"},
+    {"slug": "specra-jaguar-tee", "url": "https://buy.stripe.com/14A3cocYe9CFb7ag4w8so02"},
+    {"slug": "sakura-pagoda-tee", "url": "https://buy.stripe.com/aFa9AM3nE6qtfnq5pS8so03"},
+    {"slug": "crane-mountain-tee", "url": "https://buy.stripe.com/4gMcMY6zQdSVcbe2dG8so04"},
+    {"slug": "rearing-horse-tee", "url": "https://buy.stripe.com/28EfZabUa2ad4IMaKc8so05"},
+    {"slug": "best-dad-ever-hoodie", "url": "https://buy.stripe.com/fZu9AM2jA6qt5MQ5pS8so06"}
+  ],
+  "custom": {
+    "tee_1": "https://buy.stripe.com/eVq00c4rI6qtejmbOg8so07",
+    "tee_2": "https://buy.stripe.com/dRmeV64rI9CF8Z26tW8so08",
+    "hoodie_1": "https://buy.stripe.com/6oUdR27DUcORb7a5pS8so09",
+    "hoodie_2": "https://buy.stripe.com/dRm3cogaq8yBgru6tW8so0a",
+    "sweatshirt_1": "https://buy.stripe.com/00w28k2jA2ada363hK8so0b",
+    "sweatshirt_2": "https://buy.stripe.com/7sYcMYcYeg13grucSk8so0c",
+    "tote_1": "https://buy.stripe.com/00wdR27DUg13ejm3hK8so0d",
+    "tote_2": "https://buy.stripe.com/28E6oA6zQcORgruaKc8so0e"
+  }
+}

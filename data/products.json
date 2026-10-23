@@ -1,0 +1,17 @@
+{
+  "categories": [
+    {"id": "originals", "name": "Specra Originals", "description": "Pieces that carry the Specra name."},
+    {"id": "graphic", "name": "Graphic Prints", "description": "Big, bold graphics."},
+    {"id": "slogan", "name": "Slogan Tees", "description": "One line, said properly."},
+    {"id": "anime", "name": "Anime", "description": "Anime-style designs."},
+    {"id": "estonia", "name": "Made for Estonia", "description": "Estonian flag and Estonian words."}
+  ],
+  "products": [
+    {"name": "SPECRA Jaguar Tee", "type": "tee", "colour": "Cream", "category": "originals", "sides": 1, "image": "/assets/img/products/jaguar-overlay.jpg", "description": "A prowling jaguar climbing up from the hem, with the SPECRA name at the chest."},
+    {"name": "Sakura Pagoda Tee", "type": "tee", "colour": "Navy", "category": "graphic", "sides": 1, "image": "/assets/img/products/sakura-pagoda.jpg", "description": "A tall pagoda and cherry-blossom panel down the chest, with small Japanese script beneath."},
+    {"name": "Crane Mountain Tee", "type": "tee", "colour": "Heather Navy", "category": "graphic", "sides": 1, "image": "/assets/img/products/crane-mountain.jpg", "description": "White mountains, a red sun and flying cranes across the back, with the SPECRA name below."},
+    {"name": "Neon Mandala Tee", "type": "tee", "colour": "Black", "category": "graphic", "sides": 1, "image": "/assets/img/products/neon-mandala.jpg", "description": "A glowing cyan mandala with an eye at its centre, on black."},
+    {"name": "Rearing Horse Tee", "type": "tee", "colour": "White", "category": "graphic", "sides": 1, "image": "/assets/img/products/rearing-horse.jpg", "description": "A black ink horse rearing up the side of the tee, with small lines of text above."},
+    {"name": "Best Dad Ever Hoodie", "type": "hoodie", "colour": "Charcoal", "category": "slogan", "sides": 1, "image": "/assets/img/products/best-dad-hoodie.jpg", "description": "Chunky white lettering with small red hearts on a charcoal hoodie."}
+  ]
+}

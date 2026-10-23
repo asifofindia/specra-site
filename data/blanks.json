@@ -1,0 +1,35 @@
+{
+ "blanks": [
+  {
+   "type": "tee",
+   "colour": "White",
+   "hex": "#f1f1ef",
+   "tint_base": true,
+   "front": "/assets/blanks/tee-white-front.webp",
+   "back": "/assets/blanks/tee-white-back.webp"
+  },
+  {
+   "type": "hoodie",
+   "colour": "White",
+   "hex": "#f1f1ef",
+   "tint_base": true,
+   "front": "/assets/blanks/hoodie-white-front.webp",
+   "back": "/assets/blanks/hoodie-white-back.webp"
+  },
+  {
+   "type": "sweat",
+   "colour": "White",
+   "hex": "#f1f1ef",
+   "tint_base": true,
+   "front": "/assets/blanks/sweat-white-front.webp"
+  },
+  {
+   "type": "tote",
+   "colour": "White",
+   "hex": "#f1f1ef",
+   "tint_base": true,
+   "front": "/assets/blanks/tote-white-front.webp",
+   "back": "/assets/blanks/tote-white-front.webp"
+  }
+ ]
+}
